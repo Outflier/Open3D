@@ -58,13 +58,17 @@ ExternalProject_Add(
     UPDATE_COMMAND ""
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
-        # WARNING: libjpeg-turbo uses its own old version of GNUInstallDirs.cmake
-        -DCMAKE_INSTALL_DEFAULT_LIBDIR=${Open3D_INSTALL_LIB_DIR}
         -DWITH_CRT_DLL=${WITH_CRT_DLL}
         -DENABLE_STATIC=ON
         -DENABLE_SHARED=OFF
         -DWITH_SIMD=${WITH_SIMD}
         ${ExternalProject_CMAKE_ARGS_hidden}
+        # WARNING: libjpeg-turbo uses its own old version of
+        # GNUInstallDirs.cmake and leads to invalid installs with
+        # CMAKE_INSTALL_LIBDIR, so we undefined it and set
+        # CMAKE_INSTALL_DEFAULT_LIBDIR instead.
+        -UCMAKE_INSTALL_LIBDIR
+        -DCMAKE_INSTALL_DEFAULT_LIBDIR=${Open3D_INSTALL_LIB_DIR}
     BUILD_BYPRODUCTS
         <INSTALL_DIR>/${Open3D_INSTALL_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${lib_name}${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
